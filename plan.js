@@ -188,9 +188,9 @@ function build(){
   }
   const D=dates();START=D.s;END=D.e;RS=D.rs;RE=D.re;
   // the sessions between the start and end dates are shared out by video time (main teacher), so the plan ends on the student's end date
-  // and picking an alternate teacher keeps the same days and only swaps the lectures
+  // and a longer chosen teacher takes a bigger share of those sessions from the other subjects
   const sess=(a,b)=>{let n=0;for(const x=new Date(a);x<=b;x.setDate(x.getDate()+1))n+=x.getDay()===5?2:3;return n};
-  const mt={};let mtSum=0;for(const s of act){mt[s]=mainOf(s).lists.reduce((a,l)=>a+(l?l.v.reduce((x,v)=>x+v[2],0):0),0);mtSum+=mt[s]}
+  const mt={};let mtSum=0;for(const s of act){mt[s]=Math.max(mainOf(s).lists.reduce((a,l)=>a+(l?l.v.reduce((x,v)=>x+v[2],0):0),0),Q[s].reduce((a,x)=>a+(x.dm||x.m),0));mtSum+=mt[s]}
   const nS=Math.max(act.length,sess(START,END)),per=mtSum/nS;
   const need={};for(const s of act)need[s]=Math.max(1,Math.round(mt[s]/per));
   // rounding can add a session or two: take them back from the biggest subjects so study never runs past the end date
